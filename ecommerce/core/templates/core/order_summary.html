@@ -1,0 +1,81 @@
+{% extends 'core/base.html'%}
+
+{%block content%}
+
+    <div class="container mt-5">
+        <div class="table-responsive p-5">
+            <table class="table caption-top mt-5">
+                    <h2 class="mt-3">Order Summary</h2>
+                    
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Item Title</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Total Item Price</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for order_item in order.items.all%}
+                            <tr>
+                                <th scope="row">1</th>
+                                <td>{{order_item.item.title}}</td>
+                                <td>
+                                    {%if order_item.item.discount_price%}
+                                        <del>${{order_item.item.price}}</del>
+                                        <strong style="font-size: medium;">${{order_item.item.discount_price}}</strong>
+                                    {%else%}
+                                        ${{order_item.item.price}}
+                                    {%endif%}
+                                </td>
+                                <td>
+                                    <a href="{% url 'remove-single-item' order_item.item.slug%}"><i class="fas fa-minus mr-2"></i></a>{{order_item.quantity}} <a href="{% url 'add-to-cart' order_item.item.slug%}" ><i class="fas fa-plus mi-2"></i></a>
+                                </td>
+                                <!--(for TOTAL PRICE OF AN ITEM) check if item has a discount price or not -->
+                                <td>
+                                    {%if order_item.item.discount_price%}
+                                        $ {{order_item.get_total_discount_item_price}}
+                                    
+                                    {%else%}
+                                        $ {{order_item.get_total_item_price}}
+                                    {%endif%}
+                                    <a href="{% url 'remove-from-cart' order_item.item.slug%}" style="color:red"> <i class="fas fa-trash float-right"></i></a>
+                                </td>
+                            </tr>
+                            <!-- IF ORDER IS EMPTY-->
+                            {% empty %}
+                                <tr>
+                                    <td colspan="5">
+                                        <a href="{% url 'item-list'%}" class="btn btn-info float-right mx-2">CONTINUE SHOPPING
+                                    </td>
+                                </tr>
+                    {%endfor%}
+                    {%if order.coupon.code%}
+                            <tr>
+                                            
+                                <td  colspan="4"><strong>Coupon</strong></td>
+                                <td><strong>-${{order.coupon.amount}}</strong></td>
+                            </tr>
+                    {%endif%}
+                    {% if order.get_total%}
+                        
+                    
+                            <tr>
+                            
+                                <td  colspan="4"><strong>Order Total</strong></td>
+                                <td><strong>${{order.get_total}}</strong></td>
+                            </tr>
+                            <tr>
+                                <td colspan="5">
+                                    <a href="{% url 'checkout'%}" class="btn btn-warning float-right mx-2">PROCEED TO CHECKOUT</a>
+                                    
+                                        <a href="{% url 'item-list'%}" class="btn btn-info float-right mx-2">CONTINUE SHOPPING</a>
+                                </td>
+                            </tr>
+                    {%endif%}
+                    </tbody>
+                </table>
+        </div>
+    </div>
+{%endblock content%}

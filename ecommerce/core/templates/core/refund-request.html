@@ -1,0 +1,16 @@
+{% extends 'core/base.html'%}
+{% block content%}
+    {% load crispy_forms_tags%}
+    <div class="container d-flex justify-content-center align-items-center" style="margin-top: 150px;">
+        <form  method="POST">
+            {% csrf_token %}
+            {{form|crispy}}
+            <input type="submit" value="Submit" class="btn btn-primary">
+        </form>
+
+    </div>
+
+
+    
+
+{% endblock content%}
